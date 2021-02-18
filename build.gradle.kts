@@ -4,6 +4,7 @@ plugins {
     kotlin("jvm") version "1.3.72"
     jacoco
     `maven-publish`
+    id("org.sonarqube") version "3.0"
 }
 
 java {
@@ -11,7 +12,7 @@ java {
     targetCompatibility = JavaVersion.VERSION_13
 }
 
-val moduleName = "com.github.asyncmc.template.internal"
+val moduleName = "com.github.asyncmc.protocol.raknet.api"
 val isSnapshot = version.toString().endsWith("SNAPSHOT")
 
 repositories {
@@ -54,9 +55,12 @@ plugins.withType<JavaPlugin>().configureEach {
     }
 }
 
+val ktorVersion = findProperty("ktor.version")
+
 dependencies {
     api(kotlin("stdlib-jdk8", embeddedKotlinVersion))
     api(kotlin("reflect", embeddedKotlinVersion))
+    api("io.ktor:ktor-io-jvm:$ktorVersion")
 
     testImplementation(kotlin("test-junit5", embeddedKotlinVersion))
 
@@ -140,13 +144,13 @@ publishing {
             from(components["java"])
             artifact(tasks["sourceJar"])
             pom {
-                name.set("Internal Template")
-                description.set("This is just a template project")
-                url.set("https://github.com/AsyncMC/Internal-Template")
+                name.set("RakNet API")
+                description.set("A facade for different RakNet implementation, allows the API consumer to use any RakNet implementation.")
+                url.set("https://github.com/AsyncMC/RakNet-Interface")
                 licenses {
                     license {
-                        name.set("Public domain")
-                        url.set("https://github.com/AsyncMC/Internal-Template/LICENSE.txt")
+                        name.set("GNU Affero General Public License, Version 3")
+                        url.set("https://www.gnu.org/licenses/agpl-3.0.html")
                     }
                 }
                 developers {
@@ -158,10 +162,18 @@ publishing {
                 }
                 scm {
                     url.set("https://github.com/AsyncMC/Internal-Template")
-                    connection.set("scm:git:https://github.com/AsyncMC/Internal-Template.git")
-                    developerConnection.set("https://github.com/AsyncMC/Internal-Template.git")
+                    connection.set("scm:git:https://github.com/AsyncMC/RakNet-Interface.git")
+                    developerConnection.set("https://github.com/AsyncMC/RakNet-Interface.git")
                 }
             }
         }
+    }
+}
+
+sonarqube {
+    properties {
+        property("sonar.projectKey", "AsyncMC_RakNet-Interface")
+        property("sonar.organization", "asyncmc")
+        property("sonar.host.url", "https://sonarcloud.io")
     }
 }
